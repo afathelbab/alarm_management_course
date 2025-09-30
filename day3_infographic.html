@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: Alarm Rationalization & Priority</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Application Structure Plan: The application is designed as a single, scrollable page with a sticky top navigation to guide users through four logical sections: 1. The Workshop, 2. Diagnose Your System, 3. The Priority Matrix, and 4. Contextual Alarms. This structure was chosen to mirror a logical learning and application workflow: understand the team and goals, identify existing problems, learn how to prioritize them, and finally, consider special cases. This task-oriented flow is more intuitive for a professional audience than simply following the report's module structure, turning passive reading into an active learning path. -->
+    <!-- Visualization & Content Choices: 1. Rationalization Outputs: Goal=Organize, Method=Interactive HTML/CSS cards, Justification=Breaks down the five core deliverables into digestible, clickable chunks. 2. Diagnostic Metrics: Goal=Inform/Compare, Method=JS-powered interactive cards with a Chart.js Bar Chart for 'Bad Actors' and a CSS animation for 'Chattering', Justification=Visually demonstrates abstract concepts of alarm performance issues, making them more memorable. 3. Interactive Priority Matrix: Goal=Relationships, Method=JS-driven calculator, Justification=This is the core interactive tool, allowing users to select consequence/time and see the resulting priority, creating a powerful 'learn-by-doing' experience. 4. Contextual Alarm Diagrams: Goal=Organize, Method=Simple HTML/CSS flow diagrams, Justification=Clearly illustrates complex concepts like Parent/Child suppression and Mode-Based alarming far better than text alone. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1e293b; }
+        .sticky-nav { position: -webkit-sticky; position: sticky; top: 0; z-index: 50; }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        .nav-link:hover { color: #2563eb; transform: translateY(-2px); }
+        .section-card { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 280px; max-height: 350px; }
+        .priority-btn { transition: all 0.2s ease; border: 2px solid transparent; }
+        .priority-btn.selected { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+        .metric-card { cursor: pointer; }
+        .metric-card .metric-details { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+        .metric-card.active .metric-details { max-height: 500px; }
+        .chatter-box { animation: chatter 0.2s infinite alternate; }
+        @keyframes chatter { from { opacity: 1; transform: scale(1); } to { opacity: 0.6; transform: scale(0.98); } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">The Alarm Rationalization Process</h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">An interactive guide to justifying, prioritizing, and managing alarms based on ISA-18.2 and EEMUA-191 standards.</p>
+        </header>
+
+        <nav class="sticky-nav bg-white/80 backdrop-blur-lg rounded-full shadow-md py-3 px-6 mb-12 flex justify-center space-x-4 md:space-x-8">
+            <a href="#workshop" class="nav-link font-semibold text-slate-600">1. The Workshop</a>
+            <a href="#diagnose" class="nav-link font-semibold text-slate-600">2. Diagnose System</a>
+            <a href="#priority" class="nav-link font-semibold text-slate-600">3. The Priority Matrix</a>
+            <a href="#context" class="nav-link font-semibold text-slate-600">4. Contextual Alarms</a>
+        </nav>
+
+        <div class="space-y-16">
+
+            <section id="workshop" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2">The Rationalization Workshop</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">The core activity in the alarm lifecycle where a cross-functional team challenges and justifies every alarm to ensure it is valid, necessary, and actionable.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-blue-700">The Required Team</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-slate-50 rounded-lg"><strong>Operations Rep:</strong> Provides the critical real-world view on what is achievable.</div>
+                            <div class="p-3 bg-slate-50 rounded-lg"><strong>Process Engineer:</strong> Defines process constraints and consequences.</div>
+                            <div class="p-3 bg-slate-50 rounded-lg"><strong>Control/I&C Engineer:</strong> Provides technical system knowledge.</div>
+                            <div class="p-3 bg-slate-50 rounded-lg"><strong>Safety/HSE Rep:</strong> Defines hazard severity.</div>
+                            <div class="p-3 bg-slate-50 rounded-lg"><strong>Facilitator:</strong> Drives the process and ensures consistency.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-blue-700">The 5 Documented Outputs</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"><strong>1. Justification:</strong> The reason the alarm must exist.</div>
+                            <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"><strong>2. Consequence:</strong> The specific negative outcome of inaction.</div>
+                            <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"><strong>3. Operator Action:</strong> The precise steps the operator must take.</div>
+                            <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"><strong>4. Allowable Response Time:</strong> The window to act before the consequence occurs.</div>
+                            <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"><strong>5. Attributes:</strong> The final, justified setpoint and priority.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="diagnose" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2">Diagnose Your System</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">Before rationalizing, you must identify the most problematic alarms. These key metrics from EEMUA-191 reveal the health of your current system. Click each card to expand.</p>
+                <div class="space-y-4">
+                    <div class="metric-card border rounded-lg p-4" onclick="toggleMetric('metric-bad-actors')">
+                        <div class="flex justify-between items-center font-semibold text-lg"><span>&#128200; Bad Actors</span><span class="text-2xl transform transition-transform">+</span></div>
+                        <div id="metric-bad-actors" class="metric-details mt-4 text-slate-600">
+                           <p class="mb-4"><strong>Definition:</strong> The small number of unique alarms ($\approx$10-20) that account for the majority (50-80%) of the total alarm load. They are a symptom of poor design, like incorrect setpoints or signal noise.</p>
+                           <p class="mb-4"><strong>EEMUA Goal:</strong> The top 10 "Bad Actors" should contribute **&le; 5%** of the total alarm load.</p>
+                           <div class="chart-container"><canvas id="badActorsChart"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="metric-card border rounded-lg p-4" onclick="toggleMetric('metric-chattering')">
+                        <div class="flex justify-between items-center font-semibold text-lg"><span>&#128362; Chattering Alarms</span><span class="text-2xl transform transition-transform">+</span></div>
+                        <div id="metric-chattering" class="metric-details mt-4 text-slate-600">
+                           <p class="mb-4"><strong>Definition:</strong> An alarm that repeatedly and rapidly transitions between the active and normal states. This is a severe nuisance caused by insufficient deadband or filtering.</p>
+                           <p class="mb-4"><strong>EEMUA Goal:</strong> **Zero Tolerance.** Chattering alarms must be identified and eliminated immediately.</p>
+                           <div class="text-center p-4 bg-red-100 rounded-lg">
+                               <div class="chatter-box inline-block bg-red-500 text-white font-bold py-2 px-4 rounded">ALARM</div>
+                               <p class="mt-2 text-sm text-red-700">This behavior makes the alarm summary unusable.</p>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="metric-card border rounded-lg p-4" onclick="toggleMetric('metric-stale')">
+                        <div class="flex justify-between items-center font-semibold text-lg"><span>&#128197; Stale / Standing Alarms</span><span class="text-2xl transform transition-transform">+</span></div>
+                        <div id="metric-stale" class="metric-details mt-4 text-slate-600">
+                           <p class="mb-4"><strong>Definition:</strong> An alarm that remains continuously active for an extended period (e.g., >24 hours). This clutters the alarm summary and indicates the alarm is irrelevant, likely because equipment is out of service.</p>
+                           <p class="mb-4"><strong>EEMUA Goal:</strong> **&le; 5** Stale Alarms on any given day.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="priority" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2">The Interactive Priority Matrix</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">Priority is not subjective. It's an objective calculation based on the two critical factors: the severity of the consequence and the time available for the operator to respond. Use this tool to see how they combine.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3">1. Select Severity of Consequence</h3>
+                        <div id="consequence-group" class="grid grid-cols-2 gap-3">
+                            <button class="priority-btn p-3 bg-slate-100 rounded-lg" data-value="1">Minor Asset/Economic Loss</button>
+                            <button class="priority-btn p-3 bg-yellow-100 rounded-lg" data-value="2">Significant Asset Loss</button>
+                            <button class="priority-btn p-3 bg-orange-100 rounded-lg" data-value="3">Environmental Release</button>
+                            <button class="priority-btn p-3 bg-red-100 rounded-lg" data-value="4">Potential Safety Impact</button>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-3 mt-6">2. Select Allowable Response Time (ART)</h3>
+                        <div id="art-group" class="grid grid-cols-3 gap-3">
+                            <button class="priority-btn p-3 bg-slate-100 rounded-lg" data-value="1">&gt; 30 minutes</button>
+                            <button class="priority-btn p-3 bg-slate-100 rounded-lg" data-value="2">5 - 30 minutes</button>
+                            <button class="priority-btn p-3 bg-slate-100 rounded-lg" data-value="3">&lt; 5 minutes</button>
+                        </div>
+                    </div>
+                    <div id="priority-result" class="text-center p-6 bg-slate-50 rounded-lg h-full flex flex-col justify-center">
+                        <h3 class="text-lg font-semibold text-slate-500">Resulting Priority</h3>
+                        <p id="result-text" class="text-4xl font-bold my-3 text-slate-400">Select options</p>
+                        <p id="result-desc" class="text-slate-600">The calculated priority level based on your selections will appear here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="context" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2">Context is Key: Advanced Suppression</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">A smart alarm system understands the plant's context. Two key strategies, Suppression by Design and Mode-Based Alarming, eliminate predictable nuisance alarms.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="text-xl font-semibold text-center mb-4">Parent & Child Alarms</h3>
+                        <p class="text-slate-600 mb-4 text-center">When one event causes others, only show the root cause (Parent).</p>
+                        <div class="flex flex-col items-center space-y-2">
+                           <div class="p-3 bg-red-500 text-white rounded-lg font-bold">PARENT: PUMP-101 TRIPPED</div>
+                           <div class="text-xl">&darr;</div>
+                           <div class="flex space-x-4">
+                               <div class="p-3 bg-slate-300 text-slate-500 rounded-lg line-through">CHILD: Low Flow</div>
+                               <div class="p-3 bg-slate-300 text-slate-500 rounded-lg line-through">CHILD: Low Pressure</div>
+                           </div>
+                           <div class="mt-2 p-2 bg-green-100 text-green-800 rounded text-sm font-semibold">Child alarms are automatically suppressed</div>
+                        </div>
+                    </div>
+                     <div class="p-4 border rounded-lg">
+                        <h3 class="text-xl font-semibold text-center mb-4">Mode-Based Alarms</h3>
+                        <p class="text-slate-600 mb-4 text-center">In batch processes, alarms should only be active when relevant to the current phase.</p>
+                        <div class="w-full bg-slate-100 rounded-lg p-3 flex justify-between items-center text-sm">
+                            <div class="text-center"><strong>Phase:</strong><br>Charging</div>
+                             <div class="text-center"><strong>Phase:</strong><br>Reacting</div>
+                              <div class="text-center"><strong>Phase:</strong><br>Discharge</div>
+                        </div>
+                         <div class="relative w-full h-8 bg-slate-300 rounded-lg mt-2">
+                            <div class="absolute h-full bg-blue-500 rounded-lg" style="left: 33.3%; width: 33.3%;"></div>
+                        </div>
+                         <div class="text-center mt-4">
+                             <p class="font-bold">"Reactor Temp High" Alarm</p>
+                             <p><span class="text-red-600 font-semibold">DISABLED</span> during Charging & Discharge</p>
+                              <p><span class="text-green-600 font-semibold">ENABLED</span> during Reaction</p>
+                         </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function wrapLabel(label) {
+            if (label.length <= 16) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + ' ' + word).trim().length > 16) {
+                    lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            });
+            if (currentLine) {
+                lines.push(currentLine.trim());
+            }
+            return lines;
+        }
+
+        const badActorsChartCtx = document.getElementById('badActorsChart').getContext('2d');
+        new Chart(badActorsChartCtx, {
+            type: 'bar',
+            data: {
+                labels: [wrapLabel('Top 10 Bad Actors'), wrapLabel('All Other Alarms')],
+                datasets: [{
+                    label: '% of Total Alarm Load',
+                    data: [75, 25],
+                    backgroundColor: ['#ef4444', '#3b82f6'],
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { max: 100, ticks: { callback: value => value + '%' } },
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Example: Unhealthy System' },
+                    tooltip: {
+                         callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) { return label.join(' '); } 
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const consequenceGroup = document.getElementById('consequence-group');
+        const artGroup = document.getElementById('art-group');
+        const resultText = document.getElementById('result-text');
+        const resultDesc = document.getElementById('result-desc');
+
+        let selectedConsequence = 0;
+        let selectedArt = 0;
+
+        function updatePriority() {
+            if (selectedConsequence === 0 || selectedArt === 0) {
+                resultText.textContent = 'Select options';
+                resultText.className = 'text-4xl font-bold my-3 text-slate-400';
+                resultDesc.textContent = 'The calculated priority level based on your selections will appear here.';
+                return;
+            }
+            
+            const score = selectedConsequence * selectedArt;
+            let priority, color, desc;
+
+            if (score >= 9) { // High consequence and short time
+                priority = 'High / Critical';
+                color = 'text-red-600';
+                desc = 'Poses a potential safety or major environmental/asset risk. Requires immediate operator action.';
+            } else if (score >= 4) { // Mid-range
+                priority = 'Medium';
+                color = 'text-orange-600';
+                desc = 'Indicates a significant asset or product loss risk. Requires prompt operator response.';
+            } else { // Low consequence or long time
+                priority = 'Low';
+                color = 'text-blue-600';
+                desc = 'Primarily for operational guidance and asset health. Response is not time-critical.';
+            }
+            
+            resultText.textContent = priority;
+            resultText.className = `text-4xl font-bold my-3 ${color}`;
+            resultDesc.textContent = desc;
+        }
+
+        consequenceGroup.addEventListener('click', e => {
+            if (e.target.tagName === 'BUTTON') {
+                consequenceGroup.querySelectorAll('button').forEach(btn => btn.classList.remove('selected', 'bg-blue-500', 'text-white'));
+                e.target.classList.add('selected', 'bg-blue-500', 'text-white');
+                selectedConsequence = parseInt(e.target.dataset.value);
+                updatePriority();
+            }
+        });
+
+        artGroup.addEventListener('click', e => {
+            if (e.target.tagName === 'BUTTON') {
+                artGroup.querySelectorAll('button').forEach(btn => btn.classList.remove('selected', 'bg-blue-500', 'text-white'));
+                e.target.classList.add('selected', 'bg-blue-500', 'text-white');
+                selectedArt = parseInt(e.target.dataset.value);
+                updatePriority();
+            }
+        });
+    });
+
+    function toggleMetric(id) {
+        const card = document.getElementById(id).parentElement;
+        const icon = card.querySelector('span:last-child');
+        if (card.classList.contains('active')) {
+            card.classList.remove('active');
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            card.classList.add('active');
+            icon.style.transform = 'rotate(45deg)';
+        }
+    }
+</script>
+
+</body>
+</html>

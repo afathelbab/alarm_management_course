@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographic: The Operator Response Lifecycle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --c-dark-blue: #00429d;
+            --c-medium-blue: #4771b2;
+            --c-light-blue: #73a2c6;
+            --c-teal: #a8d5da;
+            --c-accent: #ffc589;
+            --c-text: #333333;
+            --c-bg: #f4f7f9;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--c-bg);
+            color: var(--c-text);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .arrow {
+            color: var(--c-medium-blue);
+            font-size: 2rem;
+            line-height: 1;
+        }
+        .flow-step {
+            background-color: white;
+            border: 2px solid var(--c-light-blue);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- 
+    INFOGRAPHIC NARRATIVE PLAN
+    1.  Hook: Start with the problem - the high cost and risk of poor alarm management. Use a big number to grab attention.
+    2.  Core Principles: Visualize the "Characteristics of a Good Alarm" to establish what 'good' looks like.
+    3.  The Human Factor (Main Focus): Deconstruct the operator's cognitive process using the "Operator Sub-System Feedback Model" via an HTML/CSS flowchart.
+    4.  Time is Critical: Use a Chart.js visualization to compare "Actual" vs. "Allowable" response times, highlighting the narrow safety margins.
+    5.  The Solution Path: Briefly introduce the ISA-18.2 Alarm Lifecycle as the structured path to achieving an effective system.
+    6.  Conclusion: Reinforce the key message that a well-managed alarm system is a critical safety and operational tool.
+
+    VISUALIZATION CHOICES (NO SVG / NO MERMAID JS CONFIRMED)
+    -   Big Number Stat: Goal: Inform. Method: Styled HTML/CSS.
+    -   Characteristics Grid: Goal: Organize. Method: Styled HTML/CSS cards.
+    -   Operator Response Flowchart: Goal: Organize. Method: Styled HTML/CSS divs with Tailwind Flexbox.
+    -   Response Time Chart: Goal: Compare. Method: Chart.js Bar Chart on Canvas.
+    -   Lifecycle Timeline: Goal: Organize. Method: Styled HTML/CSS timeline.
+
+    NEITHER Mermaid JS NOR SVG were used in this file. All diagrams are built with HTML and CSS.
+    -->
+
+    <div class="max-w-7xl mx-auto">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black text-[var(--c-dark-blue)] mb-2">The Anatomy of an Alarm Response</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">From Annunciation to Action: A Human-Centered Approach to Alarm Management</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-1 md:col-span-1 bg-white p-6 rounded-2xl shadow-lg flex flex-col justify-center items-center text-center">
+                <h2 class="text-2xl font-bold text-[var(--c-dark-blue)] mb-2">The Cost of Inaction</h2>
+                <p class="text-6xl font-black text-[var(--c-medium-blue)]">10x</p>
+                <p class="text-gray-600 mt-2">The potential increase in risk when a critical alarm is missed. Poor alarm management is a leading contributor to major industrial incidents.</p>
+            </div>
+
+            <div class="lg:col-span-2 md:col-span-1 bg-white p-6 rounded-2xl shadow-lg">
+                <h2 class="text-2xl font-bold text-[var(--c-dark-blue)] mb-4">What Defines an Effective Alarm?</h2>
+                <p class="mb-4 text-gray-600">According to EEMUA-191, an effective alarm is not just a notification; it's a clear, actionable tool for the operator. Every alarm must be:</p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="text-3xl mb-1">🎯</div>
+                        <h3 class="font-bold text-sm">Relevant</h3>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="text-3xl mb-1">☝️</div>
+                        <h3 class="font-bold text-sm">Unique</h3>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="text-3xl mb-1">⏱️</div>
+                        <h3 class="font-bold text-sm">Timely</h3>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="text-3xl mb-1">ιεʀ</div>
+                        <h3 class="font-bold text-sm">Prioritised</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-3 md:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+                <h2 class="text-3xl font-bold text-[var(--c-dark-blue)] text-center mb-2">The Operator Sub-System: A Race Against Time</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-4xl mx-auto">When an alarm sounds, it triggers a critical sequence of human actions. The success of this sequence depends on a well-designed alarm system that supports, rather than hinders, the operator at every step.</p>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flow-step p-4 rounded-lg text-center shadow-md w-full md:w-auto">
+                        <h3 class="font-bold text-lg">Alarm Annunciation</h3>
+                        <p class="text-sm">The system alerts the operator.</p>
+                    </div>
+                    <div class="arrow hidden md:block">&rarr;</div>
+                    <div class="arrow block md:hidden">&darr;</div>
+                    <div class="flow-step p-4 rounded-lg text-center shadow-md w-full md:w-auto bg-[var(--c-teal)] border-[var(--c-medium-blue)]">
+                        <h3 class="font-bold text-lg">Detect</h3>
+                        <p class="text-sm">Operator perceives the alarm.</p>
+                    </div>
+                    <div class="arrow hidden md:block">&rarr;</div>
+                    <div class="arrow block md:hidden">&darr;</div>
+                    <div class="flow-step p-4 rounded-lg text-center shadow-md w-full md:w-auto bg-[var(--c-teal)] border-[var(--c-medium-blue)]">
+                        <h3 class="font-bold text-lg">Diagnose</h3>
+                        <p class="text-sm">Operator understands the cause.</p>
+                    </div>
+                     <div class="arrow hidden md:block">&rarr;</div>
+                     <div class="arrow block md:hidden">&darr;</div>
+                    <div class="flow-step p-4 rounded-lg text-center shadow-md w-full md:w-auto bg-[var(--c-teal)] border-[var(--c-medium-blue)]">
+                        <h3 class="font-bold text-lg">Respond</h3>
+                        <p class="text-sm">Operator decides on and takes action.</p>
+                    </div>
+                     <div class="arrow hidden md:block">&rarr;</div>
+                     <div class="arrow block md:hidden">&darr;</div>
+                    <div class="flow-step p-4 rounded-lg text-center shadow-md w-full md:w-auto">
+                        <h3 class="font-bold text-lg">Action Applied</h3>
+                        <p class="text-sm">The process begins to recover.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 md:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+                <h2 class="text-3xl font-bold text-center text-[var(--c-dark-blue)] mb-2">Visualizing the Safety Margin</h2>
+                <p class="text-center text-gray-600 mb-6">The total time for an operator to act (**Actual Response Time**) must be less than the **Allowable Response Time**. A well-rationalized alarm system maximizes this safety margin.</p>
+                <div class="chart-container">
+                    <canvas id="responseTimeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 md:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+                <h2 class="text-3xl font-bold text-[var(--c-dark-blue)] text-center mb-6">The Path to Excellence: The ISA-18.2 Alarm Lifecycle</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-4xl mx-auto">An effective alarm system is not accidental. It is the result of a structured, continuous improvement process that covers every stage from initial concept to daily operation and eventual decommissioning.</p>
+                <div class="relative w-full">
+                    <div class="border-t-4 border-dashed border-[var(--c-light-blue)] absolute top-1/2 w-full"></div>
+                    <div class="relative flex justify-between">
+                        <div class="z-10 text-center w-1/5">
+                            <div class="bg-[var(--c-medium-blue)] text-white w-12 h-12 rounded-full mx-auto flex items-center justify-center font-bold text-xl">1</div>
+                            <p class="mt-2 text-sm font-semibold">Philosophy</p>
+                        </div>
+                        <div class="z-10 text-center w-1/5">
+                            <div class="bg-[var(--c-medium-blue)] text-white w-12 h-12 rounded-full mx-auto flex items-center justify-center font-bold text-xl">2</div>
+                            <p class="mt-2 text-sm font-semibold">Identification & Rationalization</p>
+                        </div>
+                        <div class="z-10 text-center w-1/5">
+                            <div class="bg-[var(--c-medium-blue)] text-white w-12 h-12 rounded-full mx-auto flex items-center justify-center font-bold text-xl">3</div>
+                            <p class="mt-2 text-sm font-semibold">Design & Implementation</p>
+                        </div>
+                        <div class="z-10 text-center w-1/5">
+                            <div class="bg-[var(--c-medium-blue)] text-white w-12 h-12 rounded-full mx-auto flex items-center justify-center font-bold text-xl">4</div>
+                            <p class="mt-2 text-sm font-semibold">Operation & Maintenance</p>
+                        </div>
+                        <div class="z-10 text-center w-1/5">
+                            <div class="bg-[var(--c-accent)] text-white w-12 h-12 rounded-full mx-auto flex items-center justify-center font-bold text-xl">🔄</div>
+                            <p class="mt-2 text-sm font-semibold">Monitoring & Audit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <footer class="text-center mt-12 text-gray-500">
+            <p>This infographic is based on the principles outlined in EEMUA-191 and the lifecycle model from ISA-18.2.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        function wrapLabel(label, maxLength) {
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + ' ' + word).length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = currentLine ? currentLine + ' ' + word : word;
+                }
+            }
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+            return lines;
+        }
+
+        const rawLabels = ['Critical Safety Alarm', 'High Priority Process Alarm'];
+        const wrappedLabels = rawLabels.map(label => wrapLabel(label, 16));
+
+        const responseTimeData = {
+            labels: wrappedLabels,
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Detect',
+                    data: [5, 10],
+                    backgroundColor: '#73a2c6', 
+                    stack: 'Actual'
+                },
+                {
+                    type: 'bar',
+                    label: 'Diagnose',
+                    data: [15, 30],
+                    backgroundColor: '#4771b2',
+                    stack: 'Actual'
+                },
+                {
+                    type: 'bar',
+                    label: 'Respond',
+                    data: [10, 20],
+                    backgroundColor: '#00429d',
+                    stack: 'Actual'
+                },
+                {
+                    type: 'line',
+                    label: 'Allowable Response Time (s)',
+                    data: [45, 75],
+                    borderColor: '#ff6384',
+                    backgroundColor: '#ff6384',
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#ff6384',
+                    tension: 0.1
+                }
+            ]
+        };
+
+        const ctx = document.getElementById('responseTimeChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: responseTimeData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Alarm Scenario'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Time (seconds)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Actual vs. Allowable Operator Response Time'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

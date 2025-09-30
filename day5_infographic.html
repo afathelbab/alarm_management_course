@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Management: Performance, Maintenance & Best Practices</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Application Structure Plan: The SPA is structured as a narrative, single-page scrolling infographic with a sticky top navigation, guiding the user through the final stages of the alarm management lifecycle. The sections are: 1. Performance Monitoring (The Health Check), 2. Maintenance & Improvement (The Sustainment Loop), and 3. Best Practices (The Lifecycle Summary). This structure was chosen to provide a logical conclusion to the course, moving from ongoing validation (Monitoring), to corrective action (Maintenance), and finally to a holistic summary of best practices, reinforcing the entire lifecycle in a clear, memorable way. -->
+    <!-- Visualization & Content Choices: 1. KPIs: Goal=Inform/Compare, Method=Interactive HTML/CSS cards, Justification=Allows users to click and explore each key metric, making the dense information digestible. 2. Priority Distribution: Goal=Compare, Method=Chart.js Donut Chart (Canvas), Justification=Provides an immediate visual understanding of the critical 80/15/5 target for effective alarm discrimination. 3. Continuous Improvement Loop: Goal=Organize, Method=HTML/CSS Flexbox Flowchart, Justification=Visually represents the dynamic, cyclical nature of sustaining a healthy alarm system. 4. Case Study Lessons: Goal=Inform, Method=Simple, high-impact HTML/CSS cards, Justification=Distills the most important lessons from complex incidents into clear, actionable takeaways. 5. Lifecycle Summary: Goal=Organize, Method=Numbered HTML/CSS list, Justification=Serves as a final, clean summary of the four core stages of a successful alarm management program. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f9ff; color: #0c4a6e; }
+        .sticky-nav { position: -webkit-sticky; position: sticky; top: 0; z-index: 50; }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        .nav-link:hover { color: #0284c7; transform: translateY(-2px); }
+        .section-card { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07); }
+        .kpi-card-header { cursor: pointer; }
+        .kpi-card-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+        .kpi-card.active .kpi-card-content { max-height: 500px; }
+        .kpi-card.active .kpi-arrow { transform: rotate(180deg); }
+        .chart-container { position: relative; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-sky-900 tracking-tight">Sustaining Alarm System Performance</h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">An interactive guide to the final, crucial stages of the alarm management lifecycle: monitoring, maintenance, and continuous improvement.</p>
+        </header>
+
+        <nav class="sticky-nav bg-white/90 backdrop-blur-lg rounded-full shadow-lg py-3 px-6 mb-12 flex justify-center space-x-4 md:space-x-8">
+            <a href="#monitoring" class="nav-link font-semibold text-slate-700">1. Performance Monitoring</a>
+            <a href="#maintenance" class="nav-link font-semibold text-slate-700">2. Maintenance & MOC</a>
+            <a href="#best-practices" class="nav-link font-semibold text-slate-700">3. Best Practices</a>
+            <a href="#recap" class="nav-link font-semibold text-slate-700">4. Course Recap</a>
+        </nav>
+
+        <div class="space-y-16">
+
+            <section id="monitoring" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2 text-sky-800">1. The Health Check: Performance Monitoring</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">A rationalized system must be continuously monitored to prevent degradation. These Key Performance Indicators (KPIs) are the vital signs of your alarm system's health. Click each metric to learn more.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="kpi-card border rounded-lg" onclick="toggleKpi('kpi-peak-rate')">
+                        <div class="kpi-card-header p-4 flex justify-between items-center font-semibold text-lg">
+                            <span>&#9888; Max Peak Rate</span>
+                            <span class="kpi-arrow text-2xl transform transition-transform">&#8595;</span>
+                        </div>
+                        <div id="kpi-peak-rate" class="kpi-card-content px-4 pb-4 text-slate-600">
+                            <p><strong>Target:</strong> &le;10 alarms in any 10-minute period, especially after a trip.</p>
+                            <p class="mt-2"><strong>Problem Revealed:</strong> A high peak rate indicates a failure of suppression logic (e.g., Parent/Child), leading to an alarm flood that can incapacitate an operator.</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card border rounded-lg" onclick="toggleKpi('kpi-bad-actors')">
+                        <div class="kpi-card-header p-4 flex justify-between items-center font-semibold text-lg">
+                            <span>&#128293; Bad Actor Load</span>
+                             <span class="kpi-arrow text-2xl transform transition-transform">&#8595;</span>
+                        </div>
+                        <div id="kpi-bad-actors" class="kpi-card-content px-4 pb-4 text-slate-600">
+                            <p><strong>Target:</strong> The top 10 most frequent alarms should contribute &le;5% of the total alarm load.</p>
+                            <p class="mt-2"><strong>Problem Revealed:</strong> A high load from a few alarms points to design flaws like poor deadband/delay settings or incorrect setpoints that need re-rationalization.</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card border rounded-lg" onclick="toggleKpi('kpi-stale')">
+                        <div class="kpi-card-header p-4 flex justify-between items-center font-semibold text-lg">
+                            <span>&#128197; Standing / Stale Alarms</span>
+                             <span class="kpi-arrow text-2xl transform transition-transform">&#8595;</span>
+                        </div>
+                        <div id="kpi-stale" class="kpi-card-content px-4 pb-4 text-slate-600">
+                            <p><strong>Target:</strong> &le;5 stale alarms (active >24 hours) on any given day.</p>
+                            <p class="mt-2"><strong>Problem Revealed:</strong> A high number of stale alarms indicates a failure in the maintenance or MOC process, where alarms for out-of-service equipment are not being properly suppressed.</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card border rounded-lg" onclick="toggleKpi('kpi-priority')">
+                        <div class="kpi-card-header p-4 flex justify-between items-center font-semibold text-lg">
+                            <span>&#128202; Priority Distribution</span>
+                             <span class="kpi-arrow text-2xl transform transition-transform">&#8595;</span>
+                        </div>
+                         <div id="kpi-priority" class="kpi-card-content px-4 pb-4 text-slate-600">
+                            <p class="text-center"><strong>Target:</strong> 80% Low, 15% Medium, 5% High/Critical.</p>
+                            <p class="mt-2 text-center"><strong>Problem Revealed:</strong> If the High/Critical tier exceeds 5%, the system loses its ability to discriminate, making it difficult for operators to identify the most urgent alarms during an upset.</p>
+                             <div class="chart-container mt-4"><canvas id="priorityChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="maintenance" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2 text-sky-800">2. The Sustainment Loop: Maintenance & MOC</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">A healthy system stays healthy through a cycle of continuous improvement. Problems identified during monitoring are formally addressed through maintenance and Management of Change (MOC).</p>
+                <div class="relative flex flex-col items-center space-y-4 md:space-y-0 md:flex-row md:justify-around p-4">
+                    <div class="absolute top-1/2 left-0 w-full h-1 bg-sky-200 hidden md:block"></div>
+                    <div class="absolute top-0 left-1/2 w-1 h-full bg-sky-200 md:hidden"></div>
+                    
+                    <div class="relative z-10 flex flex-col items-center p-4 bg-white text-center w-48">
+                         <div class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white font-bold text-2xl mb-2">1</div>
+                         <h3 class="font-semibold">Monitor KPIs</h3>
+                         <p class="text-sm text-slate-500">Continuously track alarm system performance.</p>
+                    </div>
+                     <div class="relative z-10 flex flex-col items-center p-4 bg-white text-center w-48">
+                         <div class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white font-bold text-2xl mb-2">2</div>
+                         <h3 class="font-semibold">Identify Bad Actor</h3>
+                         <p class="text-sm text-slate-500">Isolate a nuisance alarm causing performance issues.</p>
+                    </div>
+                     <div class="relative z-10 flex flex-col items-center p-4 bg-white text-center w-48">
+                         <div class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white font-bold text-2xl mb-2">3</div>
+                         <h3 class="font-semibold">Trigger MOC</h3>
+                         <p class="text-sm text-slate-500">Initiate formal process to re-rationalize the alarm.</p>
+                    </div>
+                     <div class="relative z-10 flex flex-col items-center p-4 bg-white text-center w-48">
+                         <div class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white font-bold text-2xl mb-2">4</div>
+                         <h3 class="font-semibold">Implement Fix</h3>
+                         <p class="text-sm text-slate-500">Apply a Deadband, change setpoint, or add suppression logic.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="best-practices" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2 text-sky-800">3. Best Practices & Lessons Learned</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">Major incidents consistently reveal failures in the same core areas. A successful program internalizes these lessons and follows a structured lifecycle.</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                    <div class="p-6 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                        <h3 class="font-bold text-xl text-red-800">Lesson: Alarm Flood Failure</h3>
+                        <p class="mt-2 text-red-900">Incidents like <span class="font-bold">Milford Haven</span> and <span class="font-bold">Texas City</span> showed that operators were overwhelmed by floods of alarms, making critical warnings invisible. The lesson is to prioritize <span class="font-bold">Rationalization</span> and <span class="font-bold">Suppression</span> to keep the alarm rate manageable.</p>
+                    </div>
+                     <div class="p-6 bg-orange-50 border-l-4 border-orange-500 rounded-r-lg">
+                        <h3 class="font-bold text-xl text-orange-800">Lesson: Procedure/MOC Failure</h3>
+                        <p class="mt-2 text-orange-900">Failing to fix known faulty instruments or properly document temporary suppressions was a key factor in Texas City. The lesson is: <span class="font-bold">If it's broken, fix it or formally suppress it with compensatory measures.</span></p>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-center mb-6">The 4 Stages of a Successful Lifecycle</h3>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center p-4">
+                        <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-full bg-sky-100 text-sky-700 font-bold text-3xl mb-3">1</div>
+                        <h4 class="font-bold text-lg">Define</h4>
+                        <p class="text-slate-500 text-sm">Establish the Alarm Philosophy Document (APD) and Master Alarm Database (MAD).</p>
+                    </div>
+                    <div class="text-center p-4">
+                         <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-full bg-sky-100 text-sky-700 font-bold text-3xl mb-3">2</div>
+                        <h4 class="font-bold text-lg">Engineer</h4>
+                        <p class="text-slate-500 text-sm">Apply design principles like Deadband, Delays, and Suppression by Design.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-full bg-sky-100 text-sky-700 font-bold text-3xl mb-3">3</div>
+                        <h4 class="font-bold text-lg">Operate</h4>
+                        <p class="text-slate-500 text-sm">Ensure HMI discrimination and enforce controlled Shelving procedures.</p>
+                    </div>
+                     <div class="text-center p-4">
+                        <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-full bg-sky-100 text-sky-700 font-bold text-3xl mb-3">4</div>
+                        <h4 class="font-bold text-lg">Sustain</h4>
+                        <p class="text-slate-500 text-sm">Use continuous KPI Monitoring, MOC, and Audits to fight entropy.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="recap" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-6 text-sky-800">Full 5-Day Course Recap: From Philosophy to Performance</h2>
+                
+                <h3 class="text-xl font-bold mb-4 border-b pb-2 text-blue-700">Days 1 & 2: Define & Govern (The Foundation)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="p-3 bg-blue-50 border-l-4 border-blue-400">
+                        <h4 class="font-semibold text-lg mb-1 text-slate-800">Alarm Definition</h4>
+                        <p class="text-sm text-slate-700">An Alarm requires a <span class="font-bold">timely operator response</span>; anything less is an <span class="font-bold">Alert</span> or <span class="font-bold">Prompt</span>.</p>
+                    </div>
+                    <div class="p-3 bg-blue-50 border-l-4 border-blue-400">
+                        <h4 class="font-semibold text-lg mb-1 text-slate-800">Performance Target</h4>
+                        <p class="text-sm text-slate-700">Maintain an average alarm rate of <span class="font-bold">&le;1 alarm per 10 minutes</span> to achieve the Acceptable State.</p>
+                    </div>
+                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400">
+                        <h4 class="font-semibold text-lg mb-1 text-slate-800">Governance Standard</h4>
+                        <p class="text-sm text-slate-700">The <span class="font-bold">Alarm Philosophy Document (APD)</span> defines the rules for the entire ISA-18.2 lifecycle.</p>
+                    </div>
+                </div>
+
+                 <h3 class="text-xl font-bold mb-4 border-b pb-2 text-blue-700">Days 3 & 4: Engineer & Implement (The Execution)</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-3 bg-sky-50 border-l-4 border-sky-400">
+                        <h4 class="font-semibold text-lg mb-1 text-slate-800">Priority Strategy</h4>
+                        <p class="text-sm text-slate-700">Set priority based on <span class="font-bold">Severity of Consequence</span> and <span class="font-bold">Allowable Response Time (ART)</span> to ensure <span class="font-bold">Discrimination</span>.</p>
+                        <p class="text-sm font-mono mt-1 text-sky-700">Target Distribution: 5% High/Critical MUCH LESS THAN 15% Medium MUCH LESS THAN 80% Low</p>
+                    </div>
+                    <div class="p-3 bg-sky-50 border-l-4 border-sky-400">
+                        <h4 class="font-semibold text-lg mb-1 text-slate-800">Nuisance Elimination Tools</h4>
+                        <ul class="list-disc list-inside text-sm text-slate-700 ml-2">
+                            <li><span class="font-bold">Deadband:</span> Solves <span class="font-bold">Chattering</span> (signal oscillation).</li>
+                            <li><span class="font-bold">On-Delay:</span> Solves <span class="font-bold">Fleeting Alarms</span> (transient spikes).</li>
+                            <li><span class="font-bold">Suppression:</span> Solves <span class="font-bold">Parent/Child</span> cascades and <span class="font-bold">Mode-Based</span> irrelevance.</li>
+                        </ul>
+                    </div>
+                 </div>
+
+                 <h3 class="text-xl font-bold mt-8 mb-4 border-b pb-2 text-blue-700">Days 5: Sustain & Improve (The Long Term)</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-3 bg-green-50 border-l-4 border-green-400">
+                        <h4 class="font-semibold text-lg mb-1 text-slate-800">Monitoring & Auditing</h4>
+                        <p class="text-sm text-slate-700">Continuously track KPIs (e.g., <span class="font-bold">Bad Actors</span>) to identify degradation. The <span class="font-bold">Audit</span> confirms compliance with the APD rules.</p>
+                        <p class="text-sm text-green-800 mt-1">If a Bad Actor is found, trigger MOC immediately.</p>
+                    </div>
+                    <div class="p-3 bg-green-50 border-l-4 border-green-400">
+                        <h4 class="font-semibold text-lg mb-1 text-slate-800">Maintenance & Integrity</h4>
+                        <p class="text-sm text-slate-700">All changes require <span class="font-bold">MOC</span>. <span class="font-bold">Periodic Testing</span> must confirm the <span class="font-bold">entire signal path</span> (sensor to HMI) is intact. Use formal procedures for <span class="font-bold">Out-of-Service</span> conditions.</p>
+                    </div>
+                 </div>
+            </section>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        const priorityChartCtx = document.getElementById('priorityChart').getContext('2d');
+        new Chart(priorityChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Low Priority (80%)', 'Medium Priority (15%)', 'High/Critical (5%)'],
+                datasets: [{
+                    label: 'Target Distribution',
+                    data: [80, 15, 5],
+                    backgroundColor: ['#38bdf8', '#0ea5e9', '#ef4444'],
+                    borderColor: '#ffffff',
+                    borderWidth: 4,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 14 }
+                        }
+                    },
+                    tooltip: {
+                         callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) { return label.join(' '); } 
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    function toggleKpi(id) {
+        const card = document.getElementById(id).closest('.kpi-card');
+        card.classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>

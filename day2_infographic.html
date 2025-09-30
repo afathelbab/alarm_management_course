@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographic: From Chaos to Control in Alarm Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Deep Ocean & Coral -->
+    <!-- Application Structure Plan: The infographic tells a story: 1. It starts with the problem (Alarm Entropy & Floods). 2. It introduces the solution's core metric (EEMUA Benchmarks) with an interactive chart. 3. It details the foundational governance tool (the Alarm Philosophy Document) using a clear, organized grid. 4. It visualizes the key strategy of Prioritization with a donut chart. 5. It outlines the core corrective action (Rationalization) with a simple process flow. This structure was chosen to guide the user from understanding the 'why' (the problem) to the 'how' (the solution), making the complex topic of alarm management digestible and actionable. -->
+    <!-- Visualization & Content Choices: 1. Big Number Stat (Alarm Flood): Goal=Inform, Method=Styled HTML, Justification=High-impact intro to the problem. 2. EEMUA Benchmark Chart: Goal=Compare, Method=Chart.js Bar Chart (Canvas), Justification=Clearly visualizes the performance tiers from 'Acceptable' to 'Unacceptable'. 3. APD Grid: Goal=Organize, Method=HTML/CSS Grid, Justification=Breaks down the mandatory components of the key governance document into clear, digestible cards. 4. Priority Distribution Chart: Goal=Inform/Compare, Method=Chart.js Donut Chart (Canvas), Justification=Instantly communicates the critical 80/15/5 ratio for effective alarm discrimination. 5. Rationalization Flow: Goal=Organize, Method=HTML/CSS Flexbox, Justification=Simplifies the core process of turning potential alarms into a managed database. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f9;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .brand-dark-blue { color: #00429d; }
+        .brand-medium-blue { color: #4771b2; }
+        .brand-accent { color: #ffc589; }
+        .bg-brand-dark-blue { background-color: #00429d; }
+        .bg-brand-medium-blue { background-color: #4771b2; }
+        .bg-brand-light-blue { background-color: #a8d5da; }
+        .bg-brand-accent { background-color: #ffc589; }
+        .border-brand-medium-blue { border-color: #4771b2; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center my-12">
+            <h1 class="text-4xl md:text-6xl font-black brand-dark-blue">From Chaos to Control</h1>
+            <p class="text-xl md:text-2xl text-gray-600 mt-2">A Visual Guide to High-Performance Alarm Management</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <section class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-3xl font-bold brand-dark-blue text-center mb-4">The Problem: Alarm Entropy & The "Cry Wolf" Effect</h2>
+                <p class="text-center max-w-4xl mx-auto text-gray-600 mb-8">Without active management, alarm systems degrade. This leads to alarm floods, where operators are overwhelmed, critical alarms are missed, and safety is compromised. The result is a system that fails precisely when it's needed most.</p>
+                <div class="flex flex-col md:flex-row justify-around items-center text-center">
+                    <div class="mb-8 md:mb-0">
+                        <p class="text-7xl font-black brand-medium-blue">&gt;10</p>
+                        <p class="text-xl font-bold">Alarms in 10 Minutes</p>
+                        <p class="text-gray-500">The EEMUA-191 definition of an <br> "Alarm Flood" — an unacceptable rate.</p>
+                    </div>
+                    <div class="text-5xl brand-light-blue hidden md:block">&rarr;</div>
+                    <div class="mb-8 md:mb-0">
+                        <p class="text-7xl font-black brand-medium-blue">80%</p>
+                        <p class="text-xl font-bold">of Alarms from "Bad Actors"</p>
+                        <p class="text-gray-500">Often, a small number of poorly configured alarms <br> cause the majority of the nuisance.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
+                 <h2 class="text-3xl font-bold brand-dark-blue text-center mb-4">Measuring Performance: The EEMUA-191 Benchmark</h2>
+                 <p class="text-center max-w-4xl mx-auto text-gray-600 mb-8">Effective alarm management isn't subjective. International standards provide clear KPIs to measure the health of an alarm system from the operator's perspective. The goal is to move from an "Unacceptable" state to an "Acceptable" one.</p>
+                <div class="chart-container">
+                    <canvas id="benchmarkChart"></canvas>
+                </div>
+            </section>
+            
+            <section class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-3xl font-bold brand-dark-blue text-center mb-4">The Solution: The Alarm Philosophy Document (APD)</h2>
+                <p class="text-center max-w-4xl mx-auto text-gray-600 mb-8">As mandated by ISA-18.2, the APD is the cornerstone of governance. It's the formal, site-specific standard that defines every rule for the alarm system, ensuring consistency and preventing degradation.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-brand-medium-blue">
+                        <h3 class="font-bold text-xl mb-2">Roles & Responsibilities</h3>
+                        <p>Defines ownership for rationalization, MOC, and monitoring to ensure accountability.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-brand-medium-blue">
+                        <h3 class="font-bold text-xl mb-2">Prioritization Method</h3>
+                        <p>Establishes the objective process (e.g., risk matrix) for assigning priorities to aid operator discrimination.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-brand-medium-blue">
+                        <h3 class="font-bold text-xl mb-2">Alarm Design Principles</h3>
+                        <p>Sets rules for deadbands, delays, and suppression to prevent nuisance alarms at the source.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-brand-medium-blue">
+                        <h3 class="font-bold text-xl mb-2">Management of Change (MOC)</h3>
+                        <p>Defines the formal procedure for all permanent changes to maintain the integrity of the rationalized system.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-3xl font-bold brand-dark-blue text-center mb-4">Strategy: Effective Prioritization</h2>
+                <p class="text-center text-gray-600 mb-6">The goal of prioritization is **discrimination**. During an upset, operators must instantly identify what matters most. A healthy system follows a strict distribution, making high-priority alarms rare and therefore significant.</p>
+                <div class="chart-container h-80 max-h-[350px]">
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </section>
+            
+            <section class="bg-white rounded-2xl shadow-lg p-8 flex flex-col justify-center">
+                 <h2 class="text-3xl font-bold brand-dark-blue text-center mb-4">Process: Introduction to Rationalization</h2>
+                 <p class="text-center text-gray-600 mb-6">Rationalization is the systematic process of reviewing every potential alarm to ensure it is a help, not a hindrance. This creates the **Master Alarm Database (MAD)**, the single source of truth for all alarms.</p>
+                <div class="space-y-4">
+                    <div class="bg-gray-100 p-4 rounded-lg text-center">
+                        <h3 class="font-bold text-lg brand-dark-blue">INPUTS</h3>
+                        <p>Potential alarms from HAZOPs, P&IDs, and operating experience.</p>
+                    </div>
+                    <div class="text-center text-3xl font-bold brand-accent">&darr;</div>
+                    <div class="border-2 border-brand-medium-blue p-4 rounded-lg text-center bg-blue-50">
+                         <h3 class="font-bold text-lg brand-dark-blue">RATIONALIZATION REVIEW</h3>
+                         <p>Justify, define consequence, define operator action, assign priority & setpoint.</p>
+                    </div>
+                    <div class="text-center text-3xl font-bold brand-accent">&darr;</div>
+                    <div class="bg-brand-dark-blue text-white p-4 rounded-lg text-center">
+                        <h3 class="font-bold text-lg">OUTPUT</h3>
+                        <p>The documented & approved Master Alarm Database (MAD).</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+        
+        <footer class="text-center mt-12 py-6 border-t border-gray-300">
+            <p class="text-gray-500">An effective alarm system is a critical layer of protection, achieved through a continuous lifecycle of management and improvement.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const benchmarkCtx = document.getElementById('benchmarkChart').getContext('2d');
+            new Chart(benchmarkCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Acceptable', 'Manageable', 'Over-Demanding', 'Unacceptable (Flood)'],
+                    datasets: [{
+                        label: 'Alarms per 10 Minutes',
+                        data: [1, 2, 5, 10],
+                        backgroundColor: ['#a8d5da', '#73a2c6', '#ffc589', '#d73027'],
+                        borderColor: ['#a8d5da', '#73a2c6', '#ffc589', '#d73027'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Number of Alarms in a 10-Minute Period' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'EEMUA-191 Alarm Rate Performance Levels' },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                      return label.join(' ');
+                                    } else {
+                                      return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+            new Chart(priorityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Priority', 'Medium Priority', 'Critical/High Priority'],
+                    datasets: [{
+                        label: 'Priority Distribution',
+                        data: [80, 15, 5],
+                        backgroundColor: ['#a8d5da', '#4771b2', '#ffc589'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                         legend: { position: 'top' },
+                         title: { display: true, text: 'Target Priority Distribution (%)' },
+                         tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                      return label.join(' ');
+                                    } else {
+                                      return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

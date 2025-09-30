@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Alarm Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Professional Neutral & Blue Accent -->
+    <!-- Application Structure Plan: The SPA is structured as an interactive dashboard with four main tabs: 'Dashboard', 'The Problem', 'The Philosophy (APD)', and 'The Strategy'. This tab-based information architecture was chosen to allow users to explore the content in a non-linear way, focusing on the area most relevant to them. The flow starts with a high-level summary (Dashboard), delves into the 'why' (The Problem), explains the governance framework (The Philosophy), and finally details the corrective actions (The Strategy). This structure promotes understanding by separating the core concepts into logical, explorable sections with targeted interactions in each. -->
+    <!-- Visualization & Content Choices: 1. Dashboard KPIs: Goal=Inform, Method=Interactive stat cards with a JS slider, Justification=Allows users to tangibly see how alarm rates affect system health status, making the EEMUA benchmarks memorable. 2. Alarm Flood Simulation: Goal=Inform, Method=JS-driven animation, Justification=Viscerally demonstrates the concept of operator overload, which is hard to convey with static text. 3. APD Component Grid: Goal=Organize, Method=Clickable HTML/CSS cards with JS modals, Justification=Presents the dense information of the APD in a clean, layered way, preventing information overload. 4. Priority Distribution Chart: Goal=Compare, Method=Chart.js Donut Chart (Canvas), Justification=Clearly visualizes the critical 80/15/5 ratio for effective alarm discrimination. 5. Rationalization Flowchart: Goal=Organize, Method=HTML/CSS Flexbox diagram, Justification=Simplifies the core rationalization process into an easy-to-follow visual guide. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .tab { cursor: pointer; padding: 0.75rem 1.5rem; border-bottom: 4px solid transparent; transition: all 0.3s; }
+        .tab.active { border-color: #3b82f6; color: #3b82f6; font-weight: 600; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .chart-container { position: relative; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .kpi-card { background-color: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); text-align: center; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+        .modal-content { background: white; padding: 2rem; border-radius: 0.5rem; max-width: 500px; width: 90%; transform: scale(0.95); transition: transform 0.3s; }
+        .modal-overlay.visible .modal-content { transform: scale(1); }
+        .alarm-flash { animation: flash 1s infinite; }
+        @keyframes flash { 0%, 100% { background-color: #ef4444; } 50% { background-color: #fecaca; } }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div id="app" class="container mx-auto p-4 md:p-6">
+        <header class="text-center py-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900">Interactive Guide to Alarm Management</h1>
+            <p class="text-lg text-slate-600 mt-2">Explore the principles of creating a safe and efficient alarm system.</p>
+        </header>
+
+        <nav class="flex justify-center border-b border-slate-200 mb-8">
+            <div id="tab-dashboard" class="tab active" onclick="showTab('dashboard')">Dashboard</div>
+            <div id="tab-problem" class="tab" onclick="showTab('problem')">The Problem</div>
+            <div id="tab-philosophy" class="tab" onclick="showTab('philosophy')">The Philosophy (APD)</div>
+            <div id="tab-strategy" class="tab" onclick="showTab('strategy')">The Strategy</div>
+        </nav>
+
+        <main>
+            <div id="content-dashboard" class="tab-content active">
+                <section class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">System Health Dashboard</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto">An effective alarm system is not a matter of opinion—it's measurable. This dashboard shows how alarm rates, based on EEMUA-191 benchmarks, determine the overall health and safety of your system from an operator's perspective.</p>
+                </section>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="kpi-card">
+                        <h3 class="font-bold text-lg text-slate-500">Acceptable Rate</h3>
+                        <p class="text-4xl font-bold text-green-600 my-2">&le;1 in 10 min</p>
+                        <p class="text-slate-500">The target for a stable, safe system where operators can respond effectively.</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3 class="font-bold text-lg text-slate-500">Alarm Flood</h3>
+                        <p class="text-4xl font-bold text-red-600 my-2">&gt;10 in 10 min</p>
+                        <p class="text-slate-500">An unacceptable state where critical alarms are likely to be missed.</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3 class="font-bold text-lg text-slate-500">Max Manageable Rate</h3>
+                        <p class="text-4xl font-bold text-amber-600 my-2">&approx;2 in 10 min</p>
+                        <p class="text-slate-500">A high workload that requires focused operator attention.</p>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-center mb-4">Interactive: Check Your System's Health</h3>
+                    <p class="text-center text-slate-600 mb-4">Drag the slider to simulate your system's average alarm rate per 10 minutes and see its health classification.</p>
+                    <input id="health-slider" type="range" min="0" max="12" value="1" class="w-full">
+                    <div class="text-center mt-4">
+                        <p class="text-lg">Average Alarms / 10 min: <span id="slider-value" class="font-bold">1</span></p>
+                        <p class="text-2xl font-bold mt-2">System Health: <span id="health-status" class="text-green-600">Acceptable</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-problem" class="tab-content">
+                <section class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">The Problem: Entropy and Overload</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto">Unmanaged alarm systems inevitably degrade. This leads to the "Cry Wolf" effect, where constant nuisance alarms desensitize operators, and alarm floods, where the system becomes a hindrance instead of a help during an emergency.</p>
+                </section>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-bold mb-4">Interactive: Experience an Alarm Flood</h3>
+                    <p class="text-slate-600 mb-6">Click the button to simulate what an operator experiences when a system enters an alarm flood. Notice how quickly the screen becomes unusable and how impossible it is to identify any single critical alarm.</p>
+                    <button id="simulate-flood-btn" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition">Simulate Alarm Flood</button>
+                    <div class="mt-6 p-4 border rounded-lg bg-slate-900 min-h-[200px]">
+                        <div id="flood-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="content-philosophy" class="tab-content">
+                <section class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">The Philosophy (APD)</h2>
+                     <p class="text-slate-600 max-w-2xl mx-auto">The Alarm Philosophy Document (APD) is the mandatory governance framework required by ISA-18.2. It is the single source of truth that ensures consistency and prevents system degradation. Click on each component to learn more.</p>
+                </section>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="kpi-card hover:shadow-xl transition cursor-pointer" onclick="showModal('apd-roles')">
+                        <h3 class="text-xl font-bold text-blue-600">Roles & Responsibilities</h3>
+                        <p class="mt-2 text-slate-500">Defines ownership and accountability for the entire lifecycle.</p>
+                    </div>
+                     <div class="kpi-card hover:shadow-xl transition cursor-pointer" onclick="showModal('apd-priority')">
+                        <h3 class="text-xl font-bold text-blue-600">Prioritization Method</h3>
+                        <p class="mt-2 text-slate-500">Ensures a consistent, objective process for assigning alarm urgency.</p>
+                    </div>
+                     <div class="kpi-card hover:shadow-xl transition cursor-pointer" onclick="showModal('apd-design')">
+                        <h3 class="text-xl font-bold text-blue-600">Alarm Design Principles</h3>
+                        <p class="mt-2 text-slate-500">Sets the technical rules for things like deadbands and delays to prevent nuisance alarms.</p>
+                    </div>
+                     <div class="kpi-card hover:shadow-xl transition cursor-pointer" onclick="showModal('apd-moc')">
+                        <h3 class="text-xl font-bold text-blue-600">Management of Change (MOC)</h3>
+                        <p class="mt-2 text-slate-500">Maintains system integrity by formally managing all permanent changes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-strategy" class="tab-content">
+                <section class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">The Strategy: Prioritization & Rationalization</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto">A well-managed system relies on two core strategies: a strict prioritization methodology to aid operators during upsets, and a systematic rationalization process to ensure every alarm is valid and necessary.</p>
+                </section>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-center mb-4">Priority Distribution Target</h3>
+                        <p class="text-center text-slate-600 mb-4">To be effective, high-priority alarms must be rare. The EEMUA-191 guide recommends this 80/15/5 split to ensure "High" and "Critical" alarms stand out.</p>
+                        <div class="chart-container">
+                            <canvas id="priority-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-center mb-4">The Rationalization Process</h3>
+                        <p class="text-center text-slate-600 mb-4">This workflow turns a list of potential alarms into a fully documented and justified Master Alarm Database (MAD).</p>
+                        <div class="flex flex-col space-y-4 mt-8">
+                            <div class="p-4 bg-slate-100 rounded-lg text-center">
+                                <span class="font-bold text-slate-500">INPUT</span>
+                                <p>Potential alarms from HAZOP, P&IDs, etc.</p>
+                            </div>
+                            <div class="text-center text-2xl text-slate-400">&darr;</div>
+                             <div class="p-4 bg-blue-100 border-l-4 border-blue-500 rounded-lg text-center">
+                                <span class="font-bold text-blue-800">PROCESS</span>
+                                <p>Review justification, consequence, operator action, priority, and setpoint.</p>
+                            </div>
+                            <div class="text-center text-2xl text-slate-400">&darr;</div>
+                             <div class="p-4 bg-slate-800 text-white rounded-lg text-center">
+                                <span class="font-bold">OUTPUT</span>
+                                <p>The Master Alarm Database (MAD).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-container" class="modal-overlay" onclick="closeAllModals()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div id="modal-content-apd-roles">
+                <h3 class="text-2xl font-bold mb-4 text-blue-600">Why Roles & Responsibilities are Critical</h3>
+                <p>This section of the APD assigns a specific person or role (e.g., "Lead Control Systems Engineer") as the ultimate owner of the alarm system. It also defines who is authorized to lead rationalization workshops, approve changes via MOC, and conduct performance monitoring. Without clear ownership, alarm systems degrade because no one is accountable for their maintenance.</p>
+            </div>
+            <div id="modal-content-apd-priority" style="display:none;">
+                <h3 class="text-2xl font-bold mb-4 text-blue-600">Why a Prioritization Method is Critical</h3>
+                <p>This section defines the exact, objective method (often a risk matrix) for assigning alarm priorities. It removes subjectivity and ensures that two different engineers rationalizing two different systems will assign the same priority to alarms with similar risks. This consistency is vital for operator trust and effective response during a plant-wide upset.</p>
+            </div>
+            <div id="modal-content-apd-design" style="display:none;">
+                <h3 class="text-2xl font-bold mb-4 text-blue-600">Why Alarm Design Principles are Critical</h3>
+                <p>This section establishes the technical ground rules to prevent common nuisance alarms before they are even created. It sets standard values or methods for calculating alarm deadbands, on/off delays, and defining the logic for when alarms should be automatically suppressed (e.g., a "low flow" alarm for a pump that is not running). This builds quality into the system from the start.</p>
+            </div>
+            <div id="modal-content-apd-moc" style="display:none;">
+                <h3 class="text-2xl font-bold mb-4 text-blue-600">Why Management of Change (MOC) is Critical</h3>
+                <p>The MOC process is the gatekeeper that protects the integrity of the Master Alarm Database. It ensures that no permanent change—whether adding, deleting, or modifying an alarm—can be made without a formal review and approval process. This prevents the slow degradation or "entropy" of the alarm system over time.</p>
+            </div>
+            <button class="w-full mt-6 bg-slate-200 text-slate-800 font-bold py-2 px-4 rounded hover:bg-slate-300" onclick="closeAllModals()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            activeTab: 'dashboard',
+            floodInterval: null,
+            floodCount: 0,
+        };
+
+        function showTab(tabId) {
+            state.activeTab = tabId;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.getElementById(`content-${tabId}`).classList.add('active');
+        }
+
+        const slider = document.getElementById('health-slider');
+        const sliderValue = document.getElementById('slider-value');
+        const healthStatus = document.getElementById('health-status');
+
+        slider.addEventListener('input', () => {
+            const value = parseInt(slider.value);
+            sliderValue.textContent = value;
+            if (value <= 1) {
+                healthStatus.textContent = 'Acceptable';
+                healthStatus.className = 'text-green-600';
+            } else if (value <= 2) {
+                healthStatus.textContent = 'Manageable';
+                healthStatus.className = 'text-amber-500';
+            } else if (value <= 10) {
+                healthStatus.textContent = 'Over-Demanding';
+                healthStatus.className = 'text-orange-600';
+            } else {
+                healthStatus.textContent = 'Unacceptable (Flood)';
+                healthStatus.className = 'text-red-600';
+            }
+        });
+
+        const simulateBtn = document.getElementById('simulate-flood-btn');
+        const floodContainer = document.getElementById('flood-container');
+
+        simulateBtn.addEventListener('click', () => {
+            if (state.floodInterval) {
+                clearInterval(state.floodInterval);
+            }
+            floodContainer.innerHTML = '';
+            state.floodCount = 0;
+            simulateBtn.disabled = true;
+            simulateBtn.textContent = 'Simulating...';
+
+            state.floodInterval = setInterval(() => {
+                if (state.floodCount >= 20) {
+                    clearInterval(state.floodInterval);
+                    state.floodInterval = null;
+                    simulateBtn.disabled = false;
+                    simulateBtn.textContent = 'Simulate Alarm Flood';
+                    return;
+                }
+                const alarmEl = document.createElement('div');
+                alarmEl.className = 'p-2 rounded text-white text-xs font-bold alarm-flash';
+                alarmEl.textContent = `ALM ${Math.floor(Math.random() * 1000)}`;
+                floodContainer.appendChild(alarmEl);
+                state.floodCount++;
+            }, 150);
+        });
+        
+        const modalContainer = document.getElementById('modal-container');
+        const modalContents = modalContainer.querySelectorAll('.modal-content > div');
+
+        function showModal(modalId) {
+            modalContents.forEach(content => {
+                content.style.display = 'none';
+            });
+            document.getElementById(`modal-content-${modalId}`).style.display = 'block';
+            modalContainer.classList.add('visible');
+        }
+
+        function closeAllModals() {
+            modalContainer.classList.remove('visible');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const priorityChartCtx = document.getElementById('priority-chart').getContext('2d');
+            new Chart(priorityChartCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Priority', 'Medium Priority', 'High/Critical Priority'],
+                    datasets: [{
+                        label: 'Distribution',
+                        data: [80, 15, 5],
+                        backgroundColor: ['#60a5fa', '#3b82f6', '#ef4444'],
+                        borderColor: '#f8fafc',
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                title: (tooltipItems) => {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) { return label.join(' '); }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

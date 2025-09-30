@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4: Alarm Rationalization & Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Application Structure Plan: The infographic is divided into two modules: 1. Nuisance Control (Module 7) and 2. System Design (Module 8). This structure directly follows the handout. Nuisance control uses a table/chart structure for quick comparison of technical parameters (Deadband, Delays). System Design uses diagrams and clear HMI rules. A sticky navigation facilitates quick reference between sections. -->
+    <!-- Visualization & Content Choices: 1. Nuisance Tool Table: Goal=Compare/Organize, Method=HTML/CSS Table, Justification=The comparison of Tool vs. Problem Solved is best viewed in a high-density, structured table. 2. Deadband Guidance: Goal=Inform, Method=HTML/CSS table, Justification=Best presents specific, discrete percentage data (5%, 2%, 1%) for quick reference. 3. Suppression Diagrams: Goal=Organize, Method=HTML/CSS Flexbox Diagrams, Justification=Flowcharts clearly illustrate the conditional logic (Parent/Child, Mode-Based) better than static text. 4. MOC/ART Summary: Goal=Organize, Method=HTML/CSS cards, Justification=Highlights mandatory MOC rules and the two critical inputs (ART/Severity) for design finalization. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8faff; color: #002240; }
+        .sticky-nav { position: -webkit-sticky; position: sticky; top: 0; z-index: 50; }
+        .section-card { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05); }
+        .nav-link.active { color: #328CC1; font-weight: 600; }
+        .chart-container { position: relative; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto; height: 320px; max-height: 380px; }
+        .flow-node { display: flex; align-items: center; justify-content: center; text-align: center; padding: 0.75rem; border-radius: 0.5rem; }
+        .flow-arrow { margin: 0.5rem 0; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #328CC1; }
+        .step-node { background-color: #328CC1; color: white; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-sky-900 tracking-tight">Day 4: Alarm Engineering and Design</h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">Mastering technical tools (Deadband, Suppression) and HMI principles to build a reliable alarm system. Modules 7 & 8.</p>
+        </header>
+
+        <nav id="main-nav" class="sticky-nav bg-white/90 backdrop-blur-lg rounded-full shadow-md py-3 px-6 mb-12 flex justify-center space-x-4 md:space-x-8">
+            <a href="#nuisance-control" class="nav-link font-semibold text-slate-700 active" onclick="event.preventDefault(); document.getElementById('nuisance-control').scrollIntoView({ behavior: 'smooth' });">Nuisance Control</a>
+            <a href="#system-design" class="nav-link font-semibold text-slate-700" onclick="event.preventDefault(); document.getElementById('system-design').scrollIntoView({ behavior: 'smooth' });">System Design</a>
+        </nav>
+
+        <div class="space-y-16">
+
+            <section id="nuisance-control" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2 text-sky-800">Module 7: Nuisance Elimination Tools</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">The engineering layer is where you fight the "Bad Actors." These tools adjust signal processing to ensure only actionable, persistent alarms reach the operator.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                        <h3 class="font-bold text-lg text-red-800">MOC Compliance (Mandatory)</h3>
+                        <p class="text-sm mt-1 text-slate-700">Any <span class="font-bold">Permanent Attribute Change</span> (setpoint, logic) or <span class="font-bold">Alarm Decommissioning</span> requires a full MOC review and sign-off by Safety/Operations.</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 border-l-4 border-orange-500 rounded-r-lg md:col-span-2">
+                        <h3 class="font-bold text-lg text-orange-800">Temporary Suppression (Shelving)</h3>
+                        <p class="text-sm mt-1 text-slate-700">Shelving is <span class="font-bold">NOT</span> MOC, but requires <span class="font-bold">documentation, time limits, and shift handover procedures</span> for critical alarms to manage risk during short-term maintenance.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <div class="overflow-x-auto">
+                        <h3 class="text-xl font-semibold mb-3 text-blue-700">Technical Nuisance Toolkit Reference</h3>
+                        <table class="w-full text-sm text-left border border-slate-200">
+                            <thead class="text-xs uppercase bg-sky-100 text-sky-700 font-semibold">
+                                <tr>
+                                    <th class="p-3">Tool</th>
+                                    <th class="p-3">Calculation / Purpose</th>
+                                    <th class="p-3">Problem Solved</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <td class="p-3 font-bold text-slate-800">Deadband</td>
+                                    <td class="p-3">Value difference required to clear alarm.</td>
+                                    <td class="p-3 font-medium text-red-600">Chattering Alarms</td>
+                                </tr>
+                                <tr class="bg-slate-50 border-b">
+                                    <td class="p-3 font-bold text-slate-800">On-Delay (Filter)</td>
+                                    <td class="p-3">Time condition must persist before annunciating.</td>
+                                    <td class="p-3 font-medium text-red-600">Fleeting Alarms (Spikes)</td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="p-3 font-bold text-slate-800">Off-Delay</td>
+                                    <td class="p-3">Time alarm is locked ON after clearing process variable.</td>
+                                    <td class="p-3 font-medium text-red-600">Chattering (by stabilizing state)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h3 class="text-lg font-semibold mt-4 text-blue-700">Deadband Guidance (EEMUA-191)</h3>
+                        <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                            <li><span class="font-bold">Flow / Level:</span> $\approx 5\%$ (High oscillation susceptibility)</li>
+                            <li><span class="font-bold">Pressure:</span> $\approx 2\%$</li>
+                            <li><span class="font-bold">Temperature:</span> $\approx 1\%$ (Most stable PV, requires smallest deadband)</li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-semibold mb-1 text-blue-700 text-center">Advanced Suppression by Design</h3>
+                        
+                        <div class="p-4 bg-sky-50 rounded-lg border border-sky-200">
+                            <h4 class="font-bold text-lg mb-2 text-sky-800">Parent / Child Logic</h4>
+                            <p class="text-sm text-slate-700 mb-2">Eliminates cascade floods by displaying only the root cause event.</p>
+                            <div class="flex items-center justify-between text-xs font-semibold">
+                                <div class="flow-node bg-red-400 text-white">Parent (Pump Trip)</div>
+                                <div class="text-xl text-red-500">&#8594;</div>
+                                <div class="flow-node bg-slate-300 text-slate-600 line-through">Child (Low Flow)</div>
+                                <div class="text-xl text-green-600 ml-2">Fix: Suppress</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-sky-50 rounded-lg border border-sky-200">
+                             <h4 class="font-bold text-lg mb-2 text-sky-800">Mode-Based Alarming</h4>
+                            <p class="text-sm text-slate-700 mb-2">Alarms are automatically enabled/disabled based on operational phase (e.g., Batch Process).</p>
+                             <div class="flex items-center justify-between text-xs font-semibold mt-3">
+                                <div class="flow-node bg-slate-300 text-slate-600">Phase: Charging</div>
+                                <div class="text-xl text-red-500">&#10005;</div>
+                                <div class="flow-node bg-green-500 text-white">Alarm: Low Mixer RPM</div>
+                                <div class="text-xl text-green-600 ml-2">Status: Suppressed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="system-design" class="section-card p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2 text-sky-800">Module 8: System Design & HMI Principles</h2>
+                <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">The final stage translates rationalized data into configured software parameters and designs the operator's interface for maximum responsiveness.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-blue-700">Setpoint Calculation (ART)</h3>
+                        <div class="p-4 bg-sky-50 rounded-lg border border-sky-200">
+                            <p class="text-sm mb-4 text-slate-700">The Allowable Response Time (ART) is the most critical input determining the setpoint.</p>
+                            <div class="flex flex-col items-center">
+                                <div class="p-2 bg-sky-300 rounded-md font-bold text-sm text-sky-900">Normal Operating Range</div>
+                                <div class="flow-arrow"></div>
+                                <div class="p-2 bg-amber-400 rounded-md font-bold text-sm text-slate-900">Setpoint Must be Placed Here</div>
+                                <div class="flow-arrow"></div>
+                                <div class="p-2 bg-red-400 rounded-md font-bold text-sm text-slate-900">Safety / Trip Limit</div>
+                            </div>
+                            <p class="text-center text-xs mt-2 text-slate-500">Distance between Setpoint and Limit must guarantee ART.</p>
+                        </div>
+
+                        <h3 class="text-xl font-semibold mb-4 mt-8 text-blue-700">MOC & Design Linkage</h3>
+                        <ul class="list-disc list-inside text-sm text-slate-600 space-y-2">
+                            <li><span class="font-bold">Rationale Output (ART/Severity)</span> directly determines the <span class="font-bold">Design Function (Setpoint/Priority)</span>.</li>
+                            <li>Any modification to <span class="font-bold">Mode Justification</span> requires <span class="font-bold">MOC</span> to ensure suppression logic remains functional.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-blue-700">HMI Design Requirements (ISA-18.2)</h3>
+                        <p class="text-sm text-slate-600 mb-4">The design must follow best practices to maximize awareness and minimize the time taken for the Detect $\rightarrow$ Diagnose $\rightarrow$ Respond sequence.</p>
+
+                        <div class="space-y-4">
+                            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
+                                <h4 class="font-bold text-sm">Alarm States Indication</h4>
+                                <p class="text-xs mt-1 text-slate-700">Must distinguish: <span class="font-bold">Unacknowledged</span> (Flashing), <span class="font-bold">Acknowledged</span> (Steady), and <span class="font-bold">Return-to-Normal</span> (Distinct State).</p>
+                            </div>
+                            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
+                                <h4 class="font-bold text-sm">Priority Indication</h4>
+                                <p class="text-xs mt-1 text-slate-700">Use a <span class="font-bold">unique combination of color and sound</span> for each priority level (essential for Discrimination).</p>
+                            </div>
+                            <div class="p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
+                                <h4 class="font-bold text-sm">Alarm Summary & Navigation</h4>
+                                <p class="text-xs mt-1 text-slate-700">Must include <span class="font-bold">Tag, Priority, Time</span>, and critically, provide quick <span class="font-bold">Navigational Links</span> to the process display for immediate Diagnosis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling logic
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Initial active state for nav
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+            document.querySelectorAll('section').forEach(section => observer.observe(section));
+
+            // Toggle logic for metric details (though not specifically asked for in this request, kept for robustness)
+            window.toggleMetric = function(id) {
+                const card = document.getElementById(id);
+                card.classList.toggle('active');
+                const arrow = card.querySelector('.text-2xl.transform');
+                if (card.classList.contains('active')) {
+                    arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            };
+        });
+    </script>
+
+</body>
+</html>

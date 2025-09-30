@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Management Course: Infographics Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1e293b; }
+        .header-bg { background-color: #002240; color: #f0f9ff; }
+        .card-link { transition: all 0.2s ease-in-out; border-left: 6px solid transparent; }
+        .card-link:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); border-color: #328CC1; }
+        .day-title { color: #328CC1; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="header-bg py-16 mb-12 shadow-xl">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">Alarm Management Course</h1>
+            <p class="mt-3 text-xl md:text-2xl font-light">Interactive Course Material Portal (5 Days)</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 pb-12">
+        <h2 class="text-3xl font-bold mb-8 text-center text-slate-800">Select Module Infographic to Review</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- Day 1 -->
+            <a href="day1_infographic.html" class="card-link section-card p-6 bg-white rounded-lg shadow-md block">
+                <h3 class="text-2xl font-bold day-title mb-1">Day 1: Fundamentals (Module 1/Module 2)</h3>
+                <p class="text-sm text-slate-500 mb-4">The Alarm Definition & Lifecycle</p>
+                <p class="text-slate-700">Visualizing the Operator Sub-System response and the core characteristics of a good alarm (Relevant, Timely, Actionable).</p>
+            </a>
+
+            <!-- Day 2 (Consolidated Card) -->
+             <div class="section-card p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-bold day-title mb-1">Day 2: Governance & Strategy (Module 3/Module 4)</h3>
+                <p class="text-sm text-slate-500 mb-4">Benchmarks, APD, and Prioritization</p>
+                <div class="space-y-3">
+                    <a href="day2_infographic.html" class="block p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition">
+                        <span class="font-bold text-blue-700">&#9658; M3: Benchmarks & Why Manage</span>
+                        <p class="text-xs text-slate-600">EEMUA-191 Alarm Rate Analysis & Costs of Floods.</p>
+                    </a>
+                    <a href="day2_infographic2.html" class="block p-3 bg-sky-50 rounded-md hover:bg-sky-100 transition">
+                        <span class="font-bold text-sky-700">&#9658; M4: APD & Priority Distribution</span>
+                        <p class="text-xs text-slate-600">The 80/15/5 Rule and APD Governance Structure.</p>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Day 3 -->
+            <a href="day3_infographic.html" class="card-link section-card p-6 bg-white rounded-lg shadow-md block">
+                <h3 class="text-2xl font-bold day-title mb-1">Day 3: Rationalization Workshop (Module 5/Module 6)</h3>
+                <p class="text-sm text-slate-500 mb-4">Diagnostics, Priority, and Bad Actor Identification</p>
+                <p class="text-slate-700">Interactive tools for calculating alarm priority based on Consequence and ART, and identifying Bad Actors.</p>
+            </a>
+
+            <!-- Day 4 -->
+            <a href="day4_infographic.html" class="card-link section-card p-6 bg-white rounded-lg shadow-md block">
+                <h3 class="text-2xl font-bold day-title mb-1">Day 4: Alarm Engineering (Module 7/Module 8)</h3>
+                <p class="text-sm text-slate-500 mb-4">Nuisance Control & HMI Design</p>
+                <p class="text-slate-700">Guide to technical tools (Deadband, On-Delay) and advanced suppression logic (Parent/Child, Mode-Based Alarming).</p>
+            </a>
+
+            <!-- Day 5 -->
+            <a href="day5_infographic.html" class="card-link section-card p-6 bg-white rounded-lg shadow-md block">
+                <h3 class="text-2xl font-bold day-title mb-1">Day 5: Sustainment & Audit (Module 9/Module 10)</h3>
+                <p class="text-sm text-slate-500 mb-4">Monitoring, MOC, and Best Practices</p>
+                <p class="text-slate-700">The continuous improvement loop, KPI tracking, and lessons learned from major industrial failures.</p>
+            </a>
+
+        </div>
+    </div>
+    
+    <footer class="text-center mt-12 py-6 border-t border-gray-300">
+        <p class="text-gray-500 text-sm">Powered by the ISA-18.2 Alarm Management Lifecycle.</p>
+    </footer>
+
+</body>
+</html>
